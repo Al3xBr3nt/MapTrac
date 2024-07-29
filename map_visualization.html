@@ -15,7 +15,8 @@
 </head>
 <body>
     <div id="map"></div>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDa_xEx3VnvpYD7qfz7OqwwhSV_nCVCS8k"></script>
+    <!-- Load API Key dynamically -->
+    <script src="api_key.js"></script>
     <script>
         let map;
 
@@ -68,7 +69,16 @@
                 });
         }
 
-        window.onload = initMap;
+        // Dynamically load the Google Maps API script with the API key from the api_key.js file
+        function loadGoogleMapsApi() {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${window.API_KEY}&callback=initMap`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        }
+
+        window.onload = loadGoogleMapsApi;
     </script>
 </body>
 </html>
