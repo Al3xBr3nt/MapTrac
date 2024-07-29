@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Map Visualization</title>
+    <style>
+        #map {
+            height: 100%;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDa_xEx3VnvpYD7qfz7OqwwhSV_nCVCS8k"></script>
+    <script>
+        let map;
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 39.8283, lng: -98.5795 }, // Center of the US
+                zoom: 4
+            });
+
+            // Fetch CSV data
+            fetch('cleaned_data.csv')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    const rows = data.split('\n');
+                    rows.forEach((row, index) => {
+                        if (index === 0) return; // Skip header row
+
+                        const columns = row.split(',');
+                        const dateTime = columns[0];
+                        const duration = columns[1];
+                        const latitude = parseFloat(columns[2]);
+                        const longitude = parseFloat(columns[3]);
+
+                        if (!isNaN(latitude) && !isNaN(longitude)) {
+                            const marker = new google.maps.Marker({
+                                position: { lat: latitude, lng: longitude },
+                                map: map,
+                                title: `Date/Time: ${dateTime}\nDuration: ${duration}`
+                            });
+
+                            const infoWindow = new google.maps.InfoWindow({
+                                content: `<div><strong>Date/Time:</strong> ${dateTime}<br><strong>Duration:</strong> ${duration}</div>`
+                            });
+
+                            marker.addListener('click', () => {
+                                infoWindow.open(map, marker);
+                            });
+                        } else {
+                            console.error('Invalid latitude or longitude at row:', index + 1, row);
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                });
+        }
+
+        window.onload = initMap;
+    </script>
+</body>
+</html>
