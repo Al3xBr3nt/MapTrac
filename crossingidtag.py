@@ -117,7 +117,7 @@ def clean_data_and_get_coordinates(csv_file, output_csv_path):
     print(f"Cleaned data has been saved to '{output_csv_path}'")
 
 download_path = "C:\\Users\\bigal\\traincrossing"
-output_csv_path = "C:\\Users\\bigal\\traincrossing\\cleaned_data.csv"
+output_csv_path = "C:\\Users\\bigal\\traincrossing\\docs\\cleaned_data.csv"
 
 if download_excel_file(download_path):
     csv_file = convert_excel_to_csv(download_path)
