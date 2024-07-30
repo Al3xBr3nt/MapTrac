@@ -15,9 +15,18 @@
 </head>
 <body>
     <div id="map"></div>
-    <!-- Load API Key dynamically -->
-    <script src="api_key.js"></script>
     <script>
+        // Fetch API key from an external JavaScript file
+        fetch('api_key.js')
+            .then(response => response.text())
+            .then(apiKey => {
+                const script = document.createElement('script');
+                script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}`;
+                script.onload = initMap;
+                document.head.appendChild(script);
+            })
+            .catch(error => console.error('Error loading API key:', error));
+
         let map;
 
         function initMap() {
@@ -28,12 +37,7 @@
 
             // Fetch CSV data
             fetch('cleaned_data.csv')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok ' + response.statusText);
-                    }
-                    return response.text();
-                })
+                .then(response => response.text())
                 .then(data => {
                     const rows = data.split('\n');
                     rows.forEach((row, index) => {
@@ -64,21 +68,8 @@
                         }
                     });
                 })
-                .catch(error => {
-                    console.error('There has been a problem with your fetch operation:', error);
-                });
+                .catch(error => console.error('There has been a problem with your fetch operation:', error));
         }
-
-        // Dynamically load the Google Maps API script with the API key from the api_key.js file
-        function loadGoogleMapsApi() {
-            const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${window.API_KEY}&callback=initMap`;
-            script.async = true;
-            script.defer = true;
-            document.head.appendChild(script);
-        }
-
-        window.onload = loadGoogleMapsApi;
     </script>
 </body>
 </html>
