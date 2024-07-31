@@ -13,6 +13,22 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
+import subprocess
+
+def git_commit_and_push(file_path, message="Update cleaned_data.csv"):
+    try:
+        # Add the file to staging
+        subprocess.run(['git', 'add', file_path], check=True)
+        
+        # Commit the changes
+        subprocess.run(['git', 'commit', '-m', message], check=True)
+        
+        # Push the changes
+        subprocess.run(['git', 'push'], check=True)
+        
+        print("Successfully pushed changes to GitHub.")
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred while pushing changes to GitHub: {e}")
 
 def download_excel_file(download_path):
     try:
@@ -115,6 +131,7 @@ def clean_data_and_get_coordinates(csv_file, output_csv_path):
     
     df_result.to_csv(output_csv_path, index=False)
     print(f"Cleaned data has been saved to '{output_csv_path}'")
+    git_commit_and_push(output_csv_path)
 
 download_path = "C:\\Users\\bigal\\traincrossing"
 output_csv_path = "C:\\Users\\bigal\\traincrossing\\docs\\cleaned_data.csv"
